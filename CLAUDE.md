@@ -23,7 +23,7 @@ dotnet build
 pwsh PlayWrightDemo.Tests/bin/Debug/net10.0/playwright.ps1 install chromium   # browsers; rerun after bumping the Playwright package
 dotnet test --settings .runsettings
 dotnet test --settings .runsettings --filter "FullyQualifiedName~ExampleTests.HomepageHasPlaywrightInTitle"   # single test
-dotnet test --settings .runsettings -- Playwright.BrowserName=firefox Playwright.LaunchOptions.Headless=false # override settings
+dotnet test --settings .runsettings -- Playwright.BrowserName=firefox Playwright.LaunchOptions.Headless=false # override settings; non-Chromium browsers need their own `install`/`install-deps` first
 PWDEBUG=1 dotnet test --settings .runsettings     # Playwright Inspector
 ```
 
@@ -35,3 +35,4 @@ Browser OS dependencies need root (sudo resets PATH, so pass full paths):
 - Test fixtures inherit from `PageTest` (from `Microsoft.Playwright.NUnit`), which provides a fresh `Page`/`Context` per test and the `Expect(...)` web-first assertions. Use `ContextTest` or `BrowserTest` when a test needs to manage contexts or pages itself.
 - `.runsettings` at the repo root holds the browser, headless mode, and expect timeout. Pass it with `--settings` or the defaults apply.
 - `NUnit.Framework` is a global using, set in the csproj.
+- CI: `.github/workflows/playwright.yml` runs the suite on Chromium for pushes and PRs to `main` and uploads TRX results as the `test-results` artifact. It hard-codes the `net10.0` output path for `playwright.ps1`, so update it if the target framework changes.
